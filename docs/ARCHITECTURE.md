@@ -1,34 +1,76 @@
-# Architecture
+# FinTrack API Architecture
 
-```
-HTTP request (X-User-Id)
-      |
-      v
- Controller  -- parses/validates input, identifies caller, maps to response DTO
-      |
-      v
-  Service    -- business rules + authorisation (SplitCalculator / BalanceCalculator are pure logic)
-      |
-      v
- Repository  -- Spring Data JPA, parameterised queries only
-      |
-      v
- Model/Entity (Hibernate) --> H2 (dev) / PostgreSQL (prod)
-```
+## 1. Overview
 
-Flow for `POST /api/expenses`: ExpenseController -> ExpenseService -> SplitCalculator (validate + split)
--> SharedExpenseRepository (save) -> TransactionService (records the payer's DEBIT) -> TransactionRepository.
+FinTrack is a Spring Boot REST API for managing transactions, shared expenses, and user balances.
 
-1. The `transactions` module is the ledger foundation; `expenses` builds on it by calling `TransactionService`
-   when an expense is created, never touching `TransactionRepository` directly.
-2. Dependencies point one way only: controller -> service -> repository -> model. Controllers never hold SQL/entities in responses.
-3. All money is `BigDecimal` with scale 2; floats are never used, so there are no rounding drifts.
-4. Equal splits distribute leftover cents (100.00 / 3 = 33.34 + 33.33 + 33.33) so shares always sum to the total.
-5. Custom splits must sum exactly to the total, otherwise HTTP 400.
-6. Authorisation is enforced in the service layer: users read/delete only their own transactions and balances (HTTP 403).
-7. A central `@RestControllerAdvice` maps specific exceptions to 400/401/403/404 and hides internals on 500.
-8. Structured `event=... key=value` logging gives an audit trail without logging sensitive data.
-9. Fintech fit: strict layering keeps business rules testable and auditable, and the ORM removes SQL-injection risk.
-10. Key decision: pure calculators are framework-free, so the riskiest maths is unit-tested without Spring.
-11. Key decision: balances are derived from stored shares (single source of truth) rather than a cached balance column.
-12. Known trade-off: `X-User-Id` is a placeholder for real token authentication (see README).
+## 2. Technology Stack
+
+- Java 21
+- Spring Boot
+- Spring Web
+- Spring Data JPA
+- Jakarta Bean Validation
+- Maven
+- JUnit and Spring Boot testing
+- Relational database configured through application properties
+
+## 3. Application Layers
+
+### Controller Layer
+
+Exposes REST endpoints, receives HTTP requests, applies request validation, and returns API responses.
+
+### Service Layer
+
+Contains transaction and expense business logic, including ownership checks and expense creation workflows.
+
+### Repository Layer
+
+Uses Spring Data JPA to access and manage persistent transaction and expense data.
+
+### Domain and DTO Layer
+
+Contains entities, request records, response records, transaction types, expense types, participants, and balance models.
+
+### Calculation Layer
+
+`SplitCalculator` calculates equal and custom participant shares. `BalanceCalculator` computes net balances between users.
+
+## 4. Transaction Flow
+
+An HTTP request reaches `TransactionController`, is validated, and is passed to `TransactionService`. The service uses `TransactionRepository` to access transaction data and returns the result through a response model.
+
+## 5. Expense Flow
+
+An expense request reaches the expense controller, is validated, and is processed by the expense service. The split calculator determines participant shares, and the application persists the expense and related data.
+
+## 6. Balance Calculation
+
+The balance calculator processes debts and derives net amounts and balance directions for users.
+
+## 7. Validation and Error Handling
+
+Request validation uses Jakarta Bean Validation. Application exceptions are translated into HTTP responses through the common API exception handler.
+
+## 8. Persistence
+
+Spring Data JPA manages entity persistence. Database connection details are configured externally through application properties and environment variables where applicable.
+
+## 9. Security Boundary
+
+The current controller uses the `X-User-Id` header as a temporary identity mechanism. It must not be considered verified authentication. Production deployment requires authenticated identity and authorization enforcement.
+
+## 10. Testing
+
+JUnit and Spring Boot tests cover transaction APIs, expense APIs, split calculations, and balance calculations.
+
+## 11. Known Limitations
+
+- Production authentication is not established by the user ID header.
+- Large equal-split totals may exceed the current long-based cent conversion range.
+- Further boundary and security tests are recommended.
+
+## 12. Deployment Considerations
+
+Before production deployment, configure secure authentication, database credentials, logging, monitoring, and environment-specific settings. Run the complete test suite after final changes.
