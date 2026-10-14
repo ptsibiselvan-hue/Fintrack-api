@@ -2,9 +2,17 @@
 
 ## 1. GitHub Copilot Chat
 
-**Purpose:** Understand existing code, review implementation choices, and explore potential defects.
+## 1. GitHub Copilot Chat
 
-**Human decision:** Review each suggestion against the source code and assessment requirements before accepting it.
+**Purpose:** Understand existing Java code, explore implementation choices, and explain how application components work together.
+
+**Actual usage:** Asked GitHub Copilot to explain the purpose of `Transaction.java` without modifying files. Copilot inspected `Transaction.java`, `TransactionService.java`, `TransactionController.java`, and `TransactionType.java`.
+
+**Observed result:** Copilot explained that `Transaction.java` is a JPA entity representing a persisted financial transaction, including its owner, amount, type, description, and creation timestamp.
+
+**Human decision:** Reviewed the explanation against the source code. No files were modified during this interaction.
+
+**Evidence:** Retain a genuine screenshot of the Copilot prompt and response, if available.
 
 ## 2. GitHub Copilot Code Completion
 

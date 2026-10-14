@@ -47,3 +47,24 @@ GitHub Copilot was not available for use during the current assessment workflow.
 The file `docs/original/Transaction.java` was recovered from Git commit `e07e6aa`. It represents the version saved in that commit; it is not independently verified as Copilot's first generated output.
 
 Subsequent review and documentation work was performed with other available assistance and by inspecting the project source code. No unverified prompt history or Copilot usage evidence is claimed here.
+
+
+## Verified GitHub Copilot Interaction
+
+### Prompt
+Explain the purpose of the Transaction.java file in my current project. Do not modify any files.
+
+### Tool
+GitHub Copilot Chat in Visual Studio Code.
+
+### Observed Actions
+Copilot read `Transaction.java`, `TransactionService.java`, `TransactionController.java`, and `TransactionType.java`.
+
+### Result
+Copilot explained the purpose of the transaction entity, its persisted fields, and its relationship with the service and controller.
+
+### Human Review
+The explanation was checked against the source code. No files were modified during this interaction.
+
+### Evidence Limitation
+This is a verified Copilot interaction performed during the current assessment workflow. It is not evidence that Copilot generated the original Transaction implementation.
