@@ -1,0 +1,12 @@
+package com.fintrack;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+/** Entry point for the FinTrack API. */
+@SpringBootApplication
+public class FinTrackApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(FinTrackApplication.class, args);
+    }
+}
