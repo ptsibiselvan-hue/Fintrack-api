@@ -38,3 +38,12 @@ Document corrections actually made after Copilot generated code. For each correc
 AI-generated code was reviewed against the project requirements, existing validation, security expectations, and test results. Suggestions were not accepted automatically.
 
 Only record prompts and changes that can be verified from the actual development history.
+
+
+## Tool Availability and Prompt Evidence
+
+GitHub Copilot was not available for use during the current assessment workflow. Therefore, an original Copilot prompt and its first generated Transaction implementation could not be verified from Copilot Chat history.
+
+The file `docs/original/Transaction.java` was recovered from Git commit `e07e6aa`. It represents the version saved in that commit; it is not independently verified as Copilot's first generated output.
+
+Subsequent review and documentation work was performed with other available assistance and by inspecting the project source code. No unverified prompt history or Copilot usage evidence is claimed here.
